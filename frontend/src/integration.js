@@ -27,6 +27,8 @@ import path from 'node:path';
 
 /** @type {(opts?: { layout?: string; apiUrl?: string }) => import('astro').AstroIntegration} */
 export default function articles(options = {}) {
+  const routesDir = fileURLToPath(new URL('./routes/', import.meta.url));
+
   return {
     name: 'articles',
     hooks: {
@@ -41,11 +43,11 @@ export default function articles(options = {}) {
 
         injectRoute({
           pattern: '/articles/',
-          entryPoint: '@articles/frontend/src/routes/articles-index.astro',
+          entryPoint: path.join(routesDir, 'articles-index.astro'),
         });
         injectRoute({
           pattern: '/articles/[slug]/',
-          entryPoint: '@articles/frontend/src/routes/articles-detail.astro',
+          entryPoint: path.join(routesDir, 'articles-detail.astro'),
         });
       },
     },

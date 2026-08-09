@@ -9,7 +9,9 @@
     "./integration": "./src/integration.js",
     "./components/Articles.astro": "./src/components/Articles.astro",
     "./components/ArticleCard.astro": "./src/components/ArticleCard.astro",
-    "./components/ArticleDetail.astro": "./src/components/ArticleDetail.astro"
+    "./components/ArticleDetail.astro": "./src/components/ArticleDetail.astro",
+    "./components/ArticleLayout.astro": "./src/components/ArticleLayout.astro",
+    "./src/*": "./src/*"
   },
   "scripts": {
     "dev": "astro dev",
