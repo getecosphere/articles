@@ -1,0 +1,6 @@
+/target
+backend/target/
+**/target/
+/.env
+/node_modules
+**/node_modules/
