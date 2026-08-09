@@ -1,0 +1,51 @@
+---
+/**
+ * <Articles/> — the pluggable article list. Drop this component into any
+ * Astro page of a composition that has mounted the articles integration.
+ * It fetches published articles from the articles domain at render time
+ * (SSR) or build time (SSG), so it works in either output mode.
+ */
+import { fetchArticles } from '../lib/api.js';
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  /** Number of articles to show; omit for all. */
+  limit?: number;
+  /** Optional heading rendered above the grid. */
+  title?: string;
+}
+
+const { limit, title = 'Articles' } = Astro.props;
+let articles = [];
+let error = '';
+try {
+  const all = await fetchArticles();
+  articles = limit ? all.slice(0, limit) : all;
+} catch (e) {
+  error = e.message || 'Unable to load articles';
+}
+---
+
+<section class="articles-domain" aria-label={title}>
+  <div class="flex items-center justify-between">
+    <h2 class="font-display text-2xl font-extrabold tracking-tight text-navy-900">{title}</h2>
+    <a href="/articles/" class="text-sm font-bold text-brand-700 hover:underline">View all →</a>
+  </div>
+
+  {error && (
+    <p class="mt-4 rounded-lg border border-danger-100 bg-danger-50 p-4 text-sm text-danger-700">Failed to load articles: {error}</p>
+  )}
+
+  {!error && articles.length === 0 && (
+    <div class="mt-4 rounded-xl border border-navy-100 bg-white p-10 text-center">
+      <p class="text-sm font-semibold text-navy-900">No published articles yet</p>
+      <p class="mt-1 text-xs text-slate-500">Articles published by administrators will appear here.</p>
+    </div>
+  )}
+
+  {articles.length > 0 && (
+    <div class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {articles.map((article) => <ArticleCard article={article} />)}
+    </div>
+  )}
+</section>

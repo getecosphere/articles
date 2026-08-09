@@ -1,0 +1,48 @@
+---
+/**
+ * SSR route: /articles/[slug]/ — injected by the articles integration.
+ * Fetches the published article at request time (SSR) and renders it with
+ * full SEO + OpenGraph built from the article's own SEO fields, inside the
+ * public ArticleLayout (CRM theme preserved, no login required).
+ */
+import { fetchArticleBySlug, absolute } from '../lib/api.js';
+import ArticleDetail from '../components/ArticleDetail.astro';
+import ArticleLayout from '../components/ArticleLayout.astro';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || '';
+
+let article = null;
+let error = '';
+try {
+  article = await fetchArticleBySlug(slug);
+} catch (e) {
+  error = e.message || 'Unable to load article';
+}
+
+const title = article?.seoTitle || article?.title || 'Article not found';
+const description = article?.seoDescription || article?.excerpt || 'Read this article.';
+const canonical = absolute(siteUrl, `/articles/${slug}/`);
+const ogImage = article?.ogImageUrl || article?.coverImageUrl || (siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp');
+---
+
+<ArticleLayout title={title} description={description} canonical={canonical} ogImage={ogImage} ogType="article">
+  {error && (
+    <div class="mx-auto max-w-3xl">
+      <p class="rounded-lg border p-4 text-sm" style="border-color:#ffe4e6;background:#fff1f2;color:#be123c">Unable to load this article: {error}</p>
+      <p class="mt-4"><a href="/articles/" class="text-sm font-bold hover:underline" style="color:#047857">← Back to articles</a></p>
+    </div>
+  )}
+
+  {!error && !article && (
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-lg font-semibold" style="color:#0f1e1a">Article not found</p>
+      <p class="mt-1 text-sm text-slate-500">It may have been unpublished.</p>
+      <p class="mt-6"><a href="/articles/" class="text-sm font-bold hover:underline" style="color:#047857">← Back to articles</a></p>
+    </div>
+  )}
+
+  {article && <ArticleDetail article={article} />}
+</ArticleLayout>

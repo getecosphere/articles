@@ -1,0 +1,63 @@
+---
+/**
+ * A single article card, styled for the stuff8 theme tokens. Used inside
+ * <Articles/> and any composition list. Links to the SSR detail route.
+ */
+import { articleUrl } from '../lib/api.js';
+
+interface Props {
+  article: {
+    slug: string;
+    title: string;
+    excerpt?: string | null;
+    coverImageUrl?: string | null;
+    tags?: string[];
+    authorName: string;
+    publishedAt?: string | null;
+  };
+}
+
+const { article } = Astro.props;
+const date = article.publishedAt
+  ? new Date(article.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+  : '';
+---
+
+<a
+  href={articleUrl(article.slug)}
+  class="group flex flex-col overflow-hidden rounded-xl border border-navy-100 bg-white shadow-[0_1px_2px_rgba(15,30,25,0.04)] transition-all hover:-translate-y-0.5 hover:shadow-md"
+>
+  {article.coverImageUrl && (
+    <div class="aspect-[16/9] overflow-hidden bg-navy-100">
+      <img src={article.coverImageUrl} alt="" class="size-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+    </div>
+  )}
+  <div class="flex flex-1 flex-col gap-2 p-5">
+    {article.tags && article.tags.length > 0 && (
+      <p class="flex flex-wrap gap-1.5">
+        {article.tags.slice(0, 3).map((tag) => (
+          <span class="rounded-md bg-paper-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-navy-600">{tag}</span>
+        ))}
+      </p>
+    )}
+    <h3 class="font-display text-lg font-extrabold leading-snug tracking-tight text-navy-900 group-hover:text-clay-600">
+      {article.title}
+    </h3>
+    {article.excerpt && (
+      <p class="line-clamp-3 text-sm leading-relaxed text-slate-600">{article.excerpt}</p>
+    )}
+    <p class="mt-auto pt-2 text-xs text-slate-500">
+      {article.authorName}
+      {date && <span class="text-slate-400"> · {date}</span>}
+    </p>
+  </div>
+</a>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

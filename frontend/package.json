@@ -1,0 +1,21 @@
+{
+  "name": "@articles/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pluggable Astro SSR frontend for the articles domain. Mount articlesIntegration() in any composition to get <Articles/>, SSR routes, and SEO/OpenGraph.",
+  "exports": {
+    ".": "./src/index.js",
+    "./integration": "./src/integration.js",
+    "./components/Articles.astro": "./src/components/Articles.astro",
+    "./components/ArticleCard.astro": "./src/components/ArticleCard.astro",
+    "./components/ArticleDetail.astro": "./src/components/ArticleDetail.astro"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0"
+  }
+}

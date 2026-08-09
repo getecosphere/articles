@@ -1,0 +1,50 @@
+---
+/**
+ * SSR route: /articles/ — injected by the articles integration into the host
+ * composition. Renders the list inside the public ArticleLayout with correct
+ * SEO + OpenGraph. Runs as SSR (output: server/hybrid) or prerender.
+ */
+import { fetchArticles } from '../lib/api.js';
+import ArticleCard from '../components/ArticleCard.astro';
+import ArticleLayout from '../components/ArticleLayout.astro';
+
+export const prerender = false;
+
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || '';
+const pageUrl = siteUrl ? `${siteUrl}/articles/` : '/articles/';
+const title = 'Articles | CRM';
+const description = 'Stories, guides, and updates from the CRM team.';
+const ogImage = siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp';
+
+let articles = [];
+let error = '';
+try {
+  articles = await fetchArticles();
+} catch (e) {
+  error = e.message || 'Unable to load articles';
+}
+---
+
+<ArticleLayout title={title} description={description} canonical={pageUrl} ogImage={ogImage}>
+  <header class="mb-10">
+    <h1 class="font-display text-3xl font-extrabold tracking-tight" style="color:#0f1e1a">Articles</h1>
+    <p class="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{description}</p>
+  </header>
+
+  {error && (
+    <p class="rounded-lg border p-4 text-sm" style="border-color:#ffe4e6;background:#fff1f2;color:#be123c">Failed to load articles: {error}</p>
+  )}
+
+  {!error && articles.length === 0 && (
+    <div class="rounded-xl border p-10 text-center" style="border-color:#e2ece7;background:#fff">
+      <p class="text-sm font-semibold" style="color:#0f1e1a">No published articles yet</p>
+      <p class="mt-1 text-xs text-slate-500">Articles published by administrators will appear here.</p>
+    </div>
+  )}
+
+  {articles.length > 0 && (
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {articles.map((article) => <ArticleCard article={article} />)}
+    </div>
+  )}
+</ArticleLayout>

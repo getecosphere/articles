@@ -1,0 +1,102 @@
+---
+/**
+ * Public article layout: a site-consistent header/footer using the stuff8
+ * theme tokens, so article pages look like part of the hosting estate without
+ * requiring a login session (article pages must stay public for SEO/OG).
+ * Accepts SEO/OpenGraph props and renders them in <head>.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: string;
+  children: any;
+}
+
+const {
+  title,
+  description = '',
+  canonical,
+  ogImage,
+  ogType = 'website',
+} = Astro.props;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || '';
+const defaultOg = siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp';
+const image = ogImage || defaultOg;
+const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.url.pathname);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Onest', ui-sans-serif, system-ui, sans-serif;
+        background: #fffdf7;
+        color: #1b3029;
+        font-feature-settings: 'cv02', 'cv03';
+        -webkit-font-smoothing: antialiased;
+      }
+      .font-display { font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif; }
+      .container { max-width: 80rem; margin: 0 auto; padding: 0 1.25rem; }
+      @media (min-width: 640px) { .container { padding: 0 1.5rem; } }
+      @media (min-width: 1024px) { .container { padding: 0 2rem; } }
+      header.site, footer.site { border-color: #e2ece7; }
+    </style>
+  </head>
+  <body>
+    <header class="site sticky top-0 z-40 border-b bg-white/90 backdrop-blur-md" style="box-shadow:0 1px 2px rgba(15,30,25,.06)">
+      <div class="container flex h-16 items-center justify-between">
+        <a href="/" class="flex items-center gap-2.5" aria-label="CRM home">
+          <span class="flex size-9 items-center justify-center rounded-lg" style="background:#0f1e1a">
+            <svg class="size-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M9 13h6M9 16h4"/></svg>
+          </span>
+          <span class="font-display text-lg font-extrabold tracking-tight" style="color:#0f1e1a">CRM</span>
+        </a>
+        <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-600 md:flex" aria-label="Primary">
+          <a href="/articles/" class="transition-colors hover:text-navy-900" style="color:#2f5345">Articles</a>
+          <a href="/" class="transition-colors hover:text-navy-900" style="color:#2f5345">Home</a>
+        </nav>
+        <a href="/auth/login/" class="rounded-lg border px-4 py-2 text-sm font-bold" style="border-color:#e2ece7;background:#fff;color:#0f1e1a">Sign in</a>
+      </div>
+    </header>
+
+    <main class="py-12 sm:py-16">
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="site border-t py-10" style="background:#fff">
+      <div class="container flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+        <div class="flex items-center gap-2.5">
+          <span class="font-display text-base font-extrabold tracking-tight" style="color:#0f1e1a">CRM</span>
+        </div>
+        <p class="text-xs text-slate-500">Lead distribution for sales representatives, administrators, and partner companies.</p>
+        <p class="text-xs text-slate-400">&copy; 2026 CRM</p>
+      </div>
+    </footer>
+  </body>
+</html>
