@@ -28,7 +28,7 @@ const canonical = absolute(siteUrl, `/articles/${slug}/`);
 const ogImage = article?.ogImageUrl || article?.coverImageUrl || (siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp');
 ---
 
-<ArticleLayout title={title} description={description} canonical={canonical} ogImage={ogImage} ogType="article">
+<ArticleLayout title={title} description={description} canonical={canonical} ogImage={ogImage} ogType="article" activeSlug={slug}>
   {error && (
     <div class="mx-auto max-w-3xl">
       <p class="rounded-lg border p-4 text-sm" style="border-color:#ffe4e6;background:#fff1f2;color:#be123c">Unable to load this article: {error}</p>

@@ -1,0 +1,115 @@
+---
+/**
+ * ArticleSidebar — a VitePress-style left navigation for the articles domain.
+ * Lists every published article and highlights the one being read, so readers
+ * can move through the content without going back to the index. The list is
+ * fetched at render time (SSR) and stays part of the host theme.
+ */
+import { fetchArticles, articleUrl } from '../lib/api.js';
+
+interface Props {
+  /** Slug of the article currently open, if any. */
+  activeSlug?: string;
+}
+
+const { activeSlug = '' } = Astro.props;
+let articles = [];
+let error = '';
+try {
+  articles = await fetchArticles();
+} catch (e) {
+  error = e.message || 'Unable to load articles';
+}
+---
+
+<nav class="article-sidebar" aria-label="Articles">
+  <p class="sidebar-label">On this site</p>
+  <a
+    href="/articles/"
+    class={activeSlug === '' ? 'sidebar-link active' : 'sidebar-link'}
+  >
+    <span class="dot" aria-hidden="true"></span>
+    All articles
+  </a>
+
+  {error && <p class="sidebar-error">Unable to load articles.</p>}
+
+  <ul class="sidebar-list">
+    {articles.map((article) => (
+      <li>
+        <a
+          href={articleUrl(article.slug)}
+          class={activeSlug === article.slug ? 'sidebar-link active' : 'sidebar-link'}
+        >
+          <span class="dot" aria-hidden="true"></span>
+          <span class="title">{article.title}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .sidebar-label {
+    margin: 0 0 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6f9d8c;
+  }
+  .sidebar-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.45rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #2f5345;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .sidebar-link:hover {
+    background: #eef5f1;
+    color: #0f1e1a;
+  }
+  .sidebar-link.active {
+    background: #0f1e1a;
+    color: #faf6ec;
+    font-weight: 700;
+  }
+  .sidebar-link .dot {
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-top: 0.35em;
+    border-radius: 9999px;
+    background: #bfd8cc;
+  }
+  .sidebar-link.active .dot {
+    background: #43aa82;
+  }
+  .sidebar-link .title {
+    overflow-wrap: anywhere;
+  }
+  .sidebar-error {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #be123c;
+  }
+</style>

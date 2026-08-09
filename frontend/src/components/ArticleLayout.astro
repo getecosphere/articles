@@ -4,13 +4,21 @@
  * theme tokens, so article pages look like part of the hosting estate without
  * requiring a login session (article pages must stay public for SEO/OG).
  * Accepts SEO/OpenGraph props and renders them in <head>.
+ *
+ * When `activeSlug` is provided the content area becomes a VitePress-style
+ * two-column layout with a left article navigation (`<ArticleSidebar/>`) so
+ * readers can move between articles without returning to the index.
  */
+import ArticleSidebar from './ArticleSidebar.astro';
+
 interface Props {
   title: string;
   description?: string;
   canonical?: string;
   ogImage?: string;
   ogType?: string;
+  /** Slug of the open article; renders the left navigation when set. */
+  activeSlug?: string;
   children: any;
 }
 
@@ -20,6 +28,7 @@ const {
   canonical,
   ogImage,
   ogType = 'website',
+  activeSlug = '',
 } = Astro.props;
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || '';
 const defaultOg = siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp';
@@ -64,6 +73,29 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
       @media (min-width: 640px) { .container { padding: 0 1.5rem; } }
       @media (min-width: 1024px) { .container { padding: 0 2rem; } }
       header.site, footer.site { border-color: #e2ece7; }
+      .layout-with-sidebar {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+      @media (min-width: 1024px) {
+        .layout-with-sidebar {
+          grid-template-columns: 17rem 1fr;
+          align-items: start;
+        }
+        .sidebar-col {
+          position: sticky;
+          top: 6rem;
+          max-height: calc(100vh - 8rem);
+          overflow-y: auto;
+          padding-right: 0.75rem;
+          border-right: 1px solid #e2ece7;
+        }
+        .content-col {
+          min-width: 0;
+          max-width: 48rem;
+        }
+      }
     </style>
   </head>
   <body>
@@ -85,7 +117,16 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
 
     <main class="py-12 sm:py-16">
       <div class="container">
-        <slot />
+        <div class={activeSlug !== '' ? 'layout-with-sidebar' : undefined}>
+          {activeSlug !== '' && (
+            <aside class="sidebar-col">
+              <ArticleSidebar activeSlug={activeSlug} />
+            </aside>
+          )}
+          <div class={activeSlug !== '' ? 'content-col' : undefined}>
+            <slot />
+          </div>
+        </div>
       </div>
     </main>
 
