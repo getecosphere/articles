@@ -110,10 +110,12 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
           <span class="font-display text-lg font-extrabold tracking-tight" style="color:#0f1e1a">CRM</span>
         </a>
         <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-600 md:flex" aria-label="Primary">
-          <a href="/articles/" class="transition-colors hover:text-navy-900" style="color:#2f5345">Articles</a>
-          <a href="/" class="transition-colors hover:text-navy-900" style="color:#2f5345">Home</a>
+          <a href="/#how-it-works" class="transition-colors hover:text-navy-900">How it works</a>
+          <a href="/#roles" class="transition-colors hover:text-navy-900">For your team</a>
+          <a href="/#features" class="transition-colors hover:text-navy-900">Features</a>
+          <a href="/articles/" class="transition-colors hover:text-navy-900">Articles</a>
         </nav>
-        <a href="/auth/login/" class="rounded-lg border px-4 py-2 text-sm font-bold" style="border-color:#e2ece7;background:#fff;color:#0f1e1a">Sign in</a>
+        <a href="/auth/login/" id="header-signin" class="rounded-lg border px-4 py-2 text-sm font-bold" style="border-color:#e2ece7;background:#fff;color:#0f1e1a">Sign in</a>
       </div>
     </header>
 
@@ -143,3 +145,44 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
     </footer>
   </body>
 </html>
+
+<script>
+  const SESSION_KEY = 'crm_session';
+
+  function roleHome(role) {
+    if (role === 'ADMIN') return '/admin/dashboard/';
+    if (role === 'SALES_REP') return '/sales/dashboard/';
+    if (role === 'PARTNER') return '/partner/dashboard/';
+    return null;
+  }
+
+  function readSession() {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      const session = JSON.parse(raw);
+      if (session.expires_at && session.expires_at < Date.now()) {
+        localStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      return session;
+    } catch {
+      return null;
+    }
+  }
+
+  (function setupSignedInState() {
+    const session = readSession();
+    const user = session?.user;
+    if (!user?.role) return;
+    const home = roleHome(user.role) || '/auth/login/';
+    const headerSignin = document.getElementById('header-signin');
+    if (headerSignin && session?.token) {
+      headerSignin.textContent = 'Open dashboard';
+      headerSignin.setAttribute('href', home);
+      headerSignin.style.borderColor = '#e2ece7';
+      headerSignin.style.background = '#0f1e1a';
+      headerSignin.style.color = '#ffffff';
+    }
+  })();
+</script>
