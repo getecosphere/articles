@@ -5,9 +5,10 @@
  * requiring a login session (article pages must stay public for SEO/OG).
  * Accepts SEO/OpenGraph props and renders them in <head>.
  *
- * When `activeSlug` is provided the content area becomes a VitePress-style
- * two-column layout with a left article navigation (`<ArticleSidebar/>`) so
- * readers can move between articles without returning to the index.
+ * When `active` is provided the content area becomes a VitePress-style
+ * two-column layout with a left table of contents (`<ArticleSidebar/>`) built
+ * from the open article's own headings, so readers can navigate the piece
+ * without leaving the page.
  */
 import ArticleSidebar from './ArticleSidebar.astro';
 
@@ -17,8 +18,8 @@ interface Props {
   canonical?: string;
   ogImage?: string;
   ogType?: string;
-  /** Slug of the open article; renders the left navigation when set. */
-  activeSlug?: string;
+  /** The open article's markdown body; renders the left TOC when set. */
+  contentMd?: string;
   children: any;
 }
 
@@ -28,7 +29,7 @@ const {
   canonical,
   ogImage,
   ogType = 'website',
-  activeSlug = '',
+  contentMd = '',
 } = Astro.props;
 const siteUrl = import.meta.env.PUBLIC_SITE_URL || '';
 const defaultOg = siteUrl ? `${siteUrl}/og-image.webp` : '/og-image.webp';
@@ -67,6 +68,7 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
         color: #1b3029;
         font-feature-settings: 'cv02', 'cv03';
         -webkit-font-smoothing: antialiased;
+        scroll-behavior: smooth;
       }
       .font-display { font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif; }
       .container { max-width: 80rem; margin: 0 auto; padding: 0 1.25rem; }
@@ -117,13 +119,13 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
 
     <main class="py-12 sm:py-16">
       <div class="container">
-        <div class={activeSlug !== '' ? 'layout-with-sidebar' : undefined}>
-          {activeSlug !== '' && (
+        <div class={contentMd !== '' ? 'layout-with-sidebar' : undefined}>
+          {contentMd !== '' && (
             <aside class="sidebar-col">
-              <ArticleSidebar activeSlug={activeSlug} />
+              <ArticleSidebar contentMd={contentMd} active={true} />
             </aside>
           )}
-          <div class={activeSlug !== '' ? 'content-col' : undefined}>
+          <div class={contentMd !== '' ? 'content-col' : undefined}>
             <slot />
           </div>
         </div>

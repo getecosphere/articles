@@ -30,9 +30,48 @@ export function absolute(siteUrl, path) {
 }
 
 /**
+ * Convert a heading's plain text into a stable URL anchor id. The same slug
+ * is used both when rendering the article body (the `id` attribute on each
+ * heading) and when building the on-page table of contents, so TOC links
+ * always land exactly on the matching heading.
+ */
+export function headingSlug(text = '') {
+  return text
+    .toLowerCase()
+    .replace(/&amp;/g, 'and')
+    .replace(/[*_`]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Extract the document structure (h2–h4 headings) from markdown content, in
+ * document order, with the same anchor ids `renderMarkdown` assigns. Used by
+ * the on-page left navigation so readers can jump between sections.
+ */
+export function extractHeadings(md = '') {
+  const headings = [];
+  for (const line of md.split('\n')) {
+    const match = line.match(/^(#{2,4})\s+(.*)$/);
+    if (!match) continue;
+    const level = match[1].length;
+    const text = match[2].trim();
+    if (!text) continue;
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/[*_`]/g, '');
+    headings.push({ id: headingSlug(escaped), text, level });
+  }
+  return headings;
+}
+
+/**
  * Lightweight markdown-to-HTML renderer used for article bodies. Handles the
  * common subset used by this demo (headings, paragraphs, bold/italic, links,
  * lists, code, blockquotes, images) without pulling in a heavy dependency.
+ * Headings h2–h4 get an `id` anchor so the on-page TOC can link to them.
  */
 export function renderMarkdown(md = '') {
   const escaped = md
@@ -42,12 +81,12 @@ export function renderMarkdown(md = '') {
 
   let html = escaped;
 
-  // Headings
+  // Headings (with anchors on h2–h4, matching extractHeadings)
   html = html.replace(/^###### (.*)$/gm, '<h6>$1</h6>');
   html = html.replace(/^##### (.*)$/gm, '<h5>$1</h5>');
-  html = html.replace(/^#### (.*)$/gm, '<h4>$1</h4>');
-  html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^#### (.*)$/gm, (_m, t) => `<h4 id="${headingSlug(t)}">${t}</h4>`);
+  html = html.replace(/^### (.*)$/gm, (_m, t) => `<h3 id="${headingSlug(t)}">${t}</h3>`);
+  html = html.replace(/^## (.*)$/gm, (_m, t) => `<h2 id="${headingSlug(t)}">${t}</h2>`);
   html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
 
   // Code blocks (fenced)
