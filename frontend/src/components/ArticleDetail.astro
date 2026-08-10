@@ -28,8 +28,8 @@ const date = article.publishedAt
 
 <article class="mx-auto max-w-3xl">
   {article.coverImageUrl && (
-    <div class="mb-8 overflow-hidden rounded-2xl border border-navy-100">
-      <img src={article.coverImageUrl} alt="" class="aspect-[16/9] w-full object-cover" />
+    <div class="article-cover mb-8 overflow-hidden rounded-2xl border border-navy-100">
+      <img src={article.coverImageUrl} alt="" class="article-cover-img" />
     </div>
   )}
 
@@ -55,6 +55,17 @@ const date = article.publishedAt
 </article>
 
 <style>
+  .article-cover {
+    max-width: 100%;
+  }
+  .article-cover-img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
   .article-body {
     color: #27433a;
     font-size: 1.0625rem;

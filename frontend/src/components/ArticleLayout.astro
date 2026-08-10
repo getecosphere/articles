@@ -80,6 +80,9 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
         grid-template-columns: 1fr;
         gap: 2.5rem;
       }
+      .sidebar-col, .content-col {
+        min-width: 0;
+      }
       @media (min-width: 1024px) {
         .layout-with-sidebar {
           grid-template-columns: 17rem 1fr;
@@ -94,7 +97,6 @@ const url = canonical || (siteUrl ? `${siteUrl}${Astro.url.pathname}` : Astro.ur
           border-right: 1px solid #e2ece7;
         }
         .content-col {
-          min-width: 0;
           max-width: 48rem;
         }
       }
