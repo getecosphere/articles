@@ -1,9 +1,10 @@
 /**
  * Shared article API client used by every component/route in this package.
- * Reads the PUBLIC_ARTICLES_URL env var that eco resolves for the host
- * composition (falls back to the gateway's /api/articles path).
+ * Reads the ARTICLES_API_URL env var that eco fills for the estate (falls back
+ * to the gateway's /api/articles path). In dev, PUBLIC_ARTICLES_URL still wins
+ * for composition builds.
  */
-export const ARTICLES_API = (import.meta.env.PUBLIC_ARTICLES_URL || '/api/articles').replace(/\/$/, '');
+export const ARTICLES_API = (process.env.ARTICLES_API_URL || import.meta.env.PUBLIC_ARTICLES_URL || '/api/articles').replace(/\/$/, '');
 
 export function articleUrl(slug) {
   return `/articles/${slug}/`;

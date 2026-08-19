@@ -1,12 +1,12 @@
 ---
 /**
- * SSR route: /articles/ — injected by the articles integration into the host
- * composition. Renders the list inside the public ArticleLayout with correct
- * SEO + OpenGraph. Runs as SSR (output: server/hybrid) or prerender.
+ * SSR route: /articles/ — the article list. Fetches published articles from
+ * the articles API at request time (SSR) and renders them inside the public
+ * ArticleLayout with correct SEO + OpenGraph.
  */
-import { fetchArticles } from '../lib/api.js';
-import ArticleCard from '../components/ArticleCard.astro';
-import ArticleLayout from '../components/ArticleLayout.astro';
+import { fetchArticles } from '../../lib/api.js';
+import ArticleCard from '../../components/ArticleCard.astro';
+import ArticleLayout from '../../components/ArticleLayout.astro';
 
 export const prerender = false;
 

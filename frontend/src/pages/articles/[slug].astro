@@ -1,13 +1,12 @@
 ---
 /**
- * SSR route: /articles/[slug]/ — injected by the articles integration.
- * Fetches the published article at request time (SSR) and renders it with
- * full SEO + OpenGraph built from the article's own SEO fields, inside the
- * public ArticleLayout (CRM theme preserved, no login required).
+ * SSR route: /articles/[slug]/ — one published article with full SEO +
+ * OpenGraph built from the article's own SEO fields, inside the public
+ * ArticleLayout (CRM theme preserved, no login required).
  */
-import { fetchArticleBySlug, absolute } from '../lib/api.js';
-import ArticleDetail from '../components/ArticleDetail.astro';
-import ArticleLayout from '../components/ArticleLayout.astro';
+import { fetchArticleBySlug, absolute } from '../../lib/api.js';
+import ArticleDetail from '../../components/ArticleDetail.astro';
+import ArticleLayout from '../../components/ArticleLayout.astro';
 
 export const prerender = false;
 

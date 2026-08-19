@@ -8,3 +8,7 @@ backend/target/
 *.env
 !.env.example
 /.env
+frontend/dist/
+frontend/.astro/
+**/dist/
+**/.astro/
