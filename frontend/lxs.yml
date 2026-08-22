@@ -1,10 +1,10 @@
 name: articles-ui
 domain: articles
-version: 0.1.0
+version: 0.2.0
 publisher: stuff8
 status: unverified
 license: mit
-summary: "Standalone Astro SSR UI for the articles domain: /articles/ + /articles/[slug]/ with SEO/OpenGraph, bun-compiled"
+summary: "Standalone native SSR UI for the articles domain: /articles + /articles/[slug] with SEO/OpenGraph"
 
 targets:
   - linux/amd64
@@ -31,8 +31,8 @@ contract:
     startup_seconds: 5
 
 runtime:
-  base: bun-compiled
-  libc: glibc
+  base: self-contained-static
+  libc: musl
   dependencies: []
 
 provenance:

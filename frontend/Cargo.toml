@@ -1,0 +1,16 @@
+[package]
+name = "articles-ui"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[profile.release]
+opt-level = 3
+lto = true
