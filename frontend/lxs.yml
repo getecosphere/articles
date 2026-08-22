@@ -8,6 +8,7 @@ summary: "Standalone Astro SSR UI for the articles domain: /articles/ + /article
 
 targets:
   - linux/amd64
+  - darwin/arm64
 
 artifacts: {}
 

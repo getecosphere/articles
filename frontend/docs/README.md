@@ -3,7 +3,8 @@
 Standalone Astro SSR UI for the **articles** domain — ships the article list
 and article-detail pages (`/articles/` and `/articles/[slug]/`) with SEO +
 OpenGraph, rendered against the articles REST API. Built by `eco lxs build`
-into a single self-contained linux-x64 binary via bun-compile.
+into a self-contained binary via bun-compile. It supports Linux amd64 for
+production and macOS Apple Silicon for local Eco development.
 
 ## What it owns
 
@@ -33,5 +34,5 @@ services:
 
 ## Runtime
 
-The compiled binary runs on any glibc Linux (Debian CT) with no node_modules.
+The compiled binary runs on each supported platform with no node_modules.
 Logs are NDJSON to stdout per the platform LXS logging contract.

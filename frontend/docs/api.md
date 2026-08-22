@@ -20,6 +20,6 @@ HTML server-side against the `articles` backend.
 
 ## Runtime
 
-- Binary: self-contained bun-compiled linux-x64 (glibc).
+- Binary: self-contained bun-compiled Linux amd64 and macOS Apple Silicon.
 - Static client assets ship next to the binary in `client/`.
 - Health: HTTP 200 on any served route; errors render in-page.
