@@ -24,3 +24,5 @@ services:
 - `api.md` — endpoints, request/response JSON, errors
 - `changelog.md` — version history
 - `gotchas.md` — operational constraints
+- `export-markdown.md` — front-matter Markdown exporter for repeatable
+  content publication
